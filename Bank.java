@@ -352,13 +352,7 @@ public void withdraw() {
 
             System.out.println("Enter the amount to be withdrawn :");
             float cashwithdraw1 = Float.parseFloat(br.readLine());
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                System.out.println("Where is your MySQL JDBC Driver?");
-                e.printStackTrace();
-                return;
-            }
+       
             getConnection();
             conn=Connection;
 

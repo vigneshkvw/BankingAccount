@@ -1,0 +1,30 @@
+CREATE TABLE `banking`.`logbook` (
+  `accountnumber` INT NOT NULL,
+  `pinNum` VARCHAR(254) 'AES_ENCRYPT()',
+  `name` VARCHAR(254) NULL,
+  `address` VARCHAR(254) NULL,
+  `state` VARCHAR(254) NULL,
+  `city` VARCHAR(254) NULL,
+  `pincode` INT NULL,
+  `cashdeposit` FLOAT NULL,
+  `cashwithdraw` FLOAT NULL,
+  `balance` FLOAT NULL,
+  PRIMARY KEY (`accountnumber`));
+
+
+
+
+
+CREATE TABLE `banking`.`transactiondetails` (
+  `AccNum` INT NOT NULL,
+  `cahdeposit` FLOAT NULL,
+  `cashwithdraw` FLOAT NULL,
+  `balance` FLOAT NULL,
+  `Date1` DATE NULL,
+  );
+  
+  
+  
+  
+ALTER TABLE `banking`.`logbook` 
+ADD UNIQUE INDEX `accountnumber_UNIQUE` (`accountnumber` ASC);

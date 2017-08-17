@@ -11,9 +11,6 @@ package bankrefractor;
  */
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.sql.*;
@@ -42,15 +39,14 @@ String state;
 
     private String sqlverification;
     private float cashwithdraw;
-    private float cashdepositamount;
-
+    
     private String sql;
 static void getConnection()throws SQLException{
     Connection =DriverManager.getConnection(
             "jdbc:mysql://localhost:3306/Banking?useSSL=false","root", "viki");
 }
     private Connection conn;
-    private Object ex;
+   
   void existingaccount() {
 
  try {
@@ -275,10 +271,10 @@ PreparedStatement preparedSelect = (PreparedStatement) conn.prepareStatement(sql
           System.out.format("%s, %s, %s, %s, %s,%s,%s,%s,%s, %s\n", accountnumber1,pinnumber1, name1,address1,state1,city1,pincode1,cashdeposit1,cashwithdraw1,Balance2 );
     }
 
-          
 
-             } catch (SQLException ex) {
- ex.printStackTrace();
+
+             } catch (SQLException e) {
+ e.printStackTrace();
         }
      conn.close();
 
@@ -287,16 +283,14 @@ PreparedStatement preparedSelect = (PreparedStatement) conn.prepareStatement(sql
 
 	public void deposit() {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            System.out.println("enter your ammount to deposit::");
-            float cashdepositamount1 = Float.parseFloat(br.readLine());
-            {
            
+            System.out.println("enter your ammount to deposit::");
+            float cashdepositamount1 = in.nextFloat();
+            
+System.out.print("hello");
+
         getConnection();
                conn=Connection;
-               conn.setAutoCommit(false);
-                System.out.println("Creating statement...");
                 sqlverification = ("SELECT balance FROM banking.logbook where accountnumber = ? ");
                 PreparedStatement preparedSelect = (PreparedStatement) conn.prepareStatement(sqlverification);
                 preparedSelect.setInt(1, account.getAccNum());
@@ -309,25 +303,7 @@ PreparedStatement preparedSelect = (PreparedStatement) conn.prepareStatement(sql
                         ps.setFloat(1, cashdepositamount1);
                         ps.setFloat(2, cashdepositamount1 + Balance5);
                         ps.setInt(3, account.getAccNum());
-                        int i = ps.executeUpdate();
-                        System.out.println(i + " records affected");
-                        System.out.println("commit/rollback");
-                        String answer = br.readLine();
-                        if (answer.equals("commit")) {
-                            conn.commit();
-                        }
-                        if (answer.equals("rollback")) {
-                            conn.rollback();
-                        }
-                        System.out.println("Want to add more records y/n");
-                        String ans = br.readLine();
-                        if (ans.equals("n")) {
-                            break;
-                        }
-                    }
-                    conn.commit();
-                    System.out.println("record successfully saved");
-
+                        ps.executeUpdate();
                     String insertTransacationTable = "INSERT INTO banking.transactiondetails" + "(AccNum,  cahdeposit,cashwithdraw, balance,Date1) VALUES" + "(?,?,?,?,curdate())";
                     PreparedStatement preparedStatement1 = conn.prepareStatement(insertTransacationTable);
                     preparedStatement1.setInt(1, account.getAccNum());
@@ -335,24 +311,20 @@ PreparedStatement preparedSelect = (PreparedStatement) conn.prepareStatement(sql
                     preparedStatement1.setFloat(3, cashwithdraw);
                     preparedStatement1.setFloat(4, cashdepositamount1 + Balance5);
                     preparedStatement1.executeUpdate();
-                }  conn.close();
-
-            }
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } catch (IOException ex) {
-            Logger.getLogger(Bank.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                }
+            conn.close();
+                   } catch (SQLException e) {
+            e.printStackTrace();
         }
+
     }
 
 public void withdraw() {
         try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
             System.out.println("Enter the amount to be withdrawn :");
-            float cashwithdraw1 = Float.parseFloat(br.readLine());
-       
+            float cashwithdraw1 =in.nextFloat();
             getConnection();
             conn=Connection;
 
@@ -365,25 +337,24 @@ public void withdraw() {
 
                 PreparedStatement ps = conn.prepareStatement("update logbook set cashwithdraw = ?, balance = ? where accountnumber = ?");
                     ps.setFloat(1, cashwithdraw1);
-                    ps.setFloat(2, Balance6-cashwithdraw1- Balance6);
+                    ps.setFloat(2, Balance6-cashwithdraw1);
+                    System.out.print(Balance6-cashwithdraw1);
                     ps.setInt(3,  account.getAccNum());
                     ps.executeUpdate();
-                    String insertTransacationTable = "INSERT INTO banking.transactiondetails" + "(AccNum,  cahdeposit,cashwithdraw, balance,Date1) VALUES" + "(?,?,?,?,curdate())";
+                    String insertTransacationTable = "INSERT INTO banking.transactiondetails" + "(AccNum,cahdeposit,cashwithdraw, balance,Date1) VALUES" + "(?,?,?,?,curdate())";
                 PreparedStatement preparedStatement1 = conn.prepareStatement(insertTransacationTable);
                 preparedStatement1.setInt(1,  account.getAccNum());
-                preparedStatement1.setFloat(2, cashdepositamount);
+                preparedStatement1.setFloat(2, Cashdeposit      );
                 preparedStatement1.setFloat(3, cashwithdraw1);
                 preparedStatement1.setFloat(4,   Balance6-cashwithdraw1);
                 preparedStatement1.executeUpdate();
 
                System.out.println("collect your cash");
             }
+conn.close();
         } catch (SQLException e) {
       e.printStackTrace();
-        } catch (IOException ex1) {
-            Logger.getLogger(Bank.class.getName()).log(Level.SEVERE, null, ex1);
         }
-
 
                         }
 
@@ -392,7 +363,7 @@ public void withdraw() {
             getConnection();
             conn=Connection;
             System.out.println("Creating statement...");
-            sqlverification = ("select * from banking.transactiondetails where AccNum = ? order by balance limit 5 ");
+            sqlverification = ("select * from banking.transactiondetails where AccNum = ? order by balance limit 15 ");
             PreparedStatement preparedSelect = (PreparedStatement) conn.prepareStatement(sqlverification);
             preparedSelect.setInt(1,  account.getAccNum());
             ResultSet rs1 = (ResultSet) preparedSelect.executeQuery();
@@ -409,9 +380,9 @@ public void withdraw() {
             }
 
 
-        } catch (SQLException ex) {
+        } catch (SQLException e) {
         System.out.println("sql error");
-         ex.printStackTrace();
+         e.printStackTrace();
         }
 
 
